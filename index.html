@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EP">
+<title>EP — Teriyaki Beef Bowls</title>
+<link rel="manifest" href="manifest.json">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #0f0f0f;
+  --bg-card: #1a1a1a;
+  --bg-secondary: #222;
+  --bg-tertiary: #2a2a2a;
+  --border: rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --text-primary: #f0f0f0;
+  --text-secondary: #888;
+  --text-muted: #555;
+  --green: #1D9E75;
+  --green-bg: #0e2e22;
+  --green-text: #4dd4a0;
+  --amber-bg: #2a1f0a;
+  --amber-text: #d4924a;
+  --teal-bg: #0a2420;
+  --teal-text: #3dc9a0;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+html, body { height: 100%; background: var(--bg); color: var(--text-primary); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overflow: hidden; }
+.app { display: flex; flex-direction: column; height: 100%; max-width: 600px; margin: 0 auto; }
+.header { padding: calc(var(--safe-top) + 16px) 16px 12px; background: var(--bg); border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+.header h1 { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+.header p { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+.badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+.badge-green { background: var(--green-bg); color: var(--green-text); }
+.badge-amber { background: var(--amber-bg); color: var(--amber-text); }
+.badge-teal { background: var(--teal-bg); color: var(--teal-text); }
+.meta-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px 16px; background: var(--bg); border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+.meta-card { background: var(--bg-card); border-radius: 8px; padding: 8px 4px; text-align: center; border: 0.5px solid var(--border); }
+.meta-card .mlabel { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+.meta-card .mvalue { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+.meta-card .munit { font-size: 10px; color: var(--text-secondary); }
+.tabs { display: flex; background: var(--bg); border-bottom: 0.5px solid var(--border); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: 1; padding: 10px 4px; font-size: 13px; color: var(--text-secondary); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; white-space: nowrap; min-width: 70px; }
+.tab.active { color: var(--text-primary); border-bottom-color: var(--green); font-weight: 500; }
+.content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--safe-bottom) + 16px); }
+.panel { display: none; padding: 12px 16px; }
+.panel.active { display: block; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.panel-title { font-size: 15px; font-weight: 500; color: var(--text-primary); }
+.servings-control { display: flex; align-items: center; gap: 8px; }
+.servings-control button { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--border-md); background: var(--bg-secondary); cursor: pointer; font-size: 18px; color: var(--text-primary); display: flex; align-items: center; justify-content: center; }
+.servings-num { font-size: 14px; font-weight: 500; color: var(--text-primary); min-width: 16px; text-align: center; }
+.card { background: var(--bg-card); border-radius: 12px; border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 12px; }
+.ingredient-group { padding: 10px 14px; }
+.ig-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.ing-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+.ing-item:last-child { border-bottom: none; }
+.ing-item.checked { opacity: 0.35; }
+.ing-item.checked .ing-name { text-decoration: line-through; }
+.checkbox { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border-md); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.checkbox.ticked { background: var(--green); border-color: var(--green); }
+.checkbox.ticked::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+.ing-body { flex: 1; }
+.ing-name { font-size: 14px; color: var(--text-primary); line-height: 1.4; }
+.ing-amount { font-weight: 600; }
+.ing-note { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+.divider { height: 0.5px; background: var(--border); margin: 0 14px; }
+.cook-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-secondary); border-bottom: 0.5px solid var(--border); }
+.cook-label { font-size: 13px; color: var(--text-secondary); }
+.toggle { width: 40px; height: 22px; background: var(--bg-tertiary); border-radius: 11px; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(--green); }
+.toggle-knob { width: 18px; height: 18px; background: #ccc; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; }
+.toggle.on .toggle-knob { left: 20px; background: white; }
+.progress-wrap { height: 3px; background: var(--bg-secondary); }
+.progress-bar { height: 3px; background: var(--green); transition: width 0.3s; }
+.step-item { display: flex; gap: 12px; padding: 12px 14px; border-bottom: 0.5px solid var(--border); cursor: pointer; }
+.step-item:last-child { border-bottom: none; }
+.step-item.done { opacity: 0.4; }
+.step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--green-bg); color: var(--green-text); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-item.done .step-num { background: var(--bg-tertiary); color: var(--text-muted); }
+.step-text { font-size: 14px; color: var(--text-primary); line-height: 1.6; flex: 1; }
+.nut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 12px; }
+.nut-item { text-align: center; padding: 10px 8px; background: var(--bg-secondary); border-radius: 8px; }
+.nut-val { font-size: 18px; font-weight: 600; color: var(--text-primary); }
+.nut-label { font-size: 12px; color: var(--text-secondary); }
+.nut-unit { font-size: 10px; color: var(--text-muted); }
+.sub-group { padding: 10px 14px; }
+.sub-group-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 0.5px solid var(--border); }
+.sub-item { padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+.sub-item:last-child { border-bottom: none; }
+.sub-ingredient { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
+.sub-swap { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.sub-swap em { color: var(--green-text); font-style: normal; font-weight: 500; }
+.extra-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+.extra-item:last-child { border-bottom: none; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 5px; }
+.extra-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Teriyaki beef bowls</h1>
+    <p>Ready in under 30 minutes</p>
+    <div class="badges">
+      <span class="badge badge-green">Gluten free</span>
+      <span class="badge badge-teal">Dairy free</span>
+      <span class="badge badge-amber">Under 30 mins</span>
+    </div>
+  </div>
+
+  <div class="meta-row">
+    <div class="meta-card"><div class="mlabel">Prep</div><div class="mvalue">10</div><div class="munit">mins</div></div>
+    <div class="meta-card"><div class="mlabel">Cook</div><div class="mvalue">20</div><div class="munit">mins</div></div>
+    <div class="meta-card"><div class="mlabel">Serves</div><div class="mvalue" id="serves-display">4</div><div class="munit">people</div></div>
+    <div class="meta-card"><div class="mlabel">Calories</div><div class="mvalue">652</div><div class="munit">kcal</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('ingredients')">Ingredients</button>
+    <button class="tab" onclick="switchTab('method')">Method</button>
+    <button class="tab" onclick="switchTab('nutrition')">Nutrition</button>
+    <button class="tab" onclick="switchTab('subs')">Substitutions</button>
+  </div>
+
+  <div class="content">
+    <div id="panel-ingredients" class="panel active">
+      <div class="panel-header">
+        <span class="panel-title">Ingredients</span>
+        <div class="servings-control">
+          <button onclick="changeServings(-1)">−</button>
+          <span class="servings-num" id="servings-num">4</span>
+          <button onclick="changeServings(1)">+</button>
+        </div>
+      </div>
+      <div class="card" id="ing-list"></div>
+    </div>
+
+    <div id="panel-method" class="panel">
+      <div class="card">
+        <div class="cook-bar">
+          <span class="cook-label">Cook mode — keeps screen on</span>
+          <div class="toggle" id="cook-toggle" onclick="toggleCookMode()"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+        <div id="step-list"></div>
+      </div>
+    </div>
+
+    <div id="panel-nutrition" class="panel">
+      <div class="card">
+        <div style="padding: 10px 14px 4px; font-size: 12px; color: var(--text-muted);">Per serving · estimates only</div>
+        <div class="nut-grid" id="nut-grid"></div>
+      </div>
+    </div>
+
+    <div id="panel-subs" class="panel">
+      <div class="card" id="subs-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 4;
+let servings = 4;
+let wakeLock = null;
+
+const ingGroups = [
+  { title: 'Bowl', items: [
+    { amount: 2, unit: 'tbsp', name: 'Olive oil', note: 'extra virgin' },
+    { amount: 500, unit: 'g', name: 'Beef mince' },
+    { amount: 370, unit: 'g', name: 'Jasmine rice', note: 'dry weight' },
+    { amount: 1, unit: 'head', name: 'Broccoli', note: 'cut into small florets' },
+    { amount: 1, unit: '', name: 'Red pepper', note: 'diced small' },
+    { amount: 2, unit: 'stalks', name: 'Spring onions', note: 'thinly sliced' },
+    { amount: 1, unit: 'tbsp', name: 'Sesame seeds' },
+    { amount: 150, unit: 'g', name: 'Edamame beans', note: 'shelled, frozen is fine' },
+    { amount: 100, unit: 'g', name: 'Mangetout', note: 'thinly sliced' },
+  ]},
+  { title: 'Teriyaki sauce', items: [
+    { amount: 60, unit: 'ml', name: 'Tamari', note: 'gluten-free soy sauce' },
+    { amount: 3, unit: 'tbsp', name: 'Honey' },
+    { amount: 60, unit: 'ml', name: 'Water' },
+    { amount: 0.5, unit: 'tsp', name: 'Ginger paste' },
+    { amount: 0.5, unit: 'tsp', name: 'Garlic paste' },
+    { amount: 1, unit: 'tbsp', name: 'Cornflour' },
+    { amount: 1, unit: 'tbsp', name: 'Rice wine vinegar' },
+    { amount: 0, unit: '', name: 'Cracked black pepper', note: 'to taste' },
+  ]}
+];
+
+const steps = [
+  'Rinse the rice 3 times in cold water, swishing with your hands. Drain, then add 590ml water. Bring to the boil, reduce to a simmer with the lid slightly ajar until nearly absorbed. Lid on fully, heat off — let it steam.',
+  'Make the teriyaki sauce: whisk tamari, honey, water, ginger paste, garlic paste, pepper and rice wine vinegar in a small saucepan. Mix cornflour with a splash of the sauce until smooth, pour back in. Warm on low, whisking until glossy and slightly thickened. Set aside.',
+  'Heat olive oil in a large frying pan on medium-high. Add beef mince and brown, breaking it up with a spatula.',
+  'Once browned, add broccoli florets and diced red pepper. Pour over the teriyaki sauce and stir well to coat.',
+  'Put edamame beans in a heatproof jug and cover with boiling water. Leave 30 seconds then drain.',
+  'Divide rice between 4 bowls. Top with the teriyaki beef and veg, then scatter over the mangetout and edamame.',
+  'Finish with sliced spring onions and sesame seeds. Serve immediately.',
+];
+
+const nutrition = [
+  { val: 652, label: 'Calories', unit: 'kcal' },
+  { val: 33, label: 'Protein', unit: 'g' },
+  { val: 51, label: 'Carbs', unit: 'g' },
+  { val: 36, label: 'Fat', unit: 'g' },
+  { val: 6, label: 'Fibre', unit: 'g' },
+  { val: 18, label: 'Sugar', unit: 'g' },
+  { val: 11, label: 'Sat fat', unit: 'g' },
+  { val: 927, label: 'Sodium', unit: 'mg' },
+];
+
+const subsGroups = [
+  { title: 'Bowl', items: [
+    { name: 'Beef mince', swap: 'Swap for <em>chicken mince</em> or <em>turkey mince</em>.' },
+    { name: 'Jasmine rice', swap: 'Any short or medium grain white rice works. Or try <em>brown rice</em>, <em>quinoa</em>, or <em>cauliflower rice</em> for low-carb.' },
+    { name: 'Red pepper', swap: 'Any colour pepper works. Or swap for <em>courgette</em>.' },
+    { name: 'Olive oil', swap: '<em>Avocado oil</em> or <em>sesame oil</em> are good alternatives.' },
+    { name: 'Sesame seeds', swap: 'Try <em>crispy fried onions</em> or <em>fried garlic</em>.' },
+    { name: 'Mangetout', swap: 'Swap for <em>sliced cucumber</em> or <em>carrot ribbons</em>.' },
+    { name: 'Edamame beans', swap: 'Buy pre-shelled frozen to save time. Leave out if unavailable.' },
+    { name: 'Spring onions', swap: '<em>Chives</em> work as a substitute, or just leave out.' },
+  ]},
+  { title: 'Teriyaki sauce', items: [
+    { name: 'Tamari', swap: '<em>Gluten-free soy sauce</em> or <em>coconut aminos</em>. Regular soy sauce if you\'re not avoiding gluten.' },
+    { name: 'Honey', swap: '<em>Pure maple syrup</em> to keep it vegan.' },
+    { name: 'Cornflour', swap: 'Same as cornstarch — just the UK name for it.' },
+  ]},
+  { title: 'Optional extras', extras: true, items: [
+    { text: 'Chilli flakes — sprinkle over before serving for extra heat.' },
+    { text: 'Sriracha mayo or kimchi mayo — drizzle on top.' },
+  ]}
+];
+
+const checkedIng = new Set();
+const checkedSteps = new Set();
+
+function fmt(amount, current) {
+  if (!amount) return '';
+  const s = (amount / BASE) * current;
+  if (s % 1 === 0) return String(s);
+  if (Math.abs(s - 0.5) < 0.01) return '½';
+  if (Math.abs(s - 0.25) < 0.01) return '¼';
+  if (Math.abs(s - 0.75) < 0.01) return '¾';
+  if (Math.abs(s - 1.5) < 0.01) return '1½';
+  return parseFloat(s.toFixed(1)).toString();
+}
+
+function renderIng() {
+  const list = document.getElementById('ing-list');
+  list.innerHTML = '';
+  ingGroups.forEach((g, gi) => {
+    if (gi > 0) { const d = document.createElement('div'); d.className = 'divider'; list.appendChild(d); }
+    const grp = document.createElement('div');
+    grp.className = 'ingredient-group';
+    grp.innerHTML = `<div class="ig-title">${g.title}</div>`;
+    g.items.forEach((item, ii) => {
+      const key = `${gi}-${ii}`;
+      const el = document.createElement('div');
+      el.className = 'ing-item' + (checkedIng.has(key) ? ' checked' : '');
+      el.onclick = () => { checkedIng.has(key) ? checkedIng.delete(key) : checkedIng.add(key); renderIng(); };
+      const a = fmt(item.amount, servings);
+      const amtStr = a ? `<span class="ing-amount">${a}${item.unit ? ' ' + item.unit : ''}</span> ` : '';
+      el.innerHTML = `<div class="checkbox ${checkedIng.has(key) ? 'ticked' : ''}"></div>
+        <div class="ing-body"><div class="ing-name">${amtStr}${item.name}</div>${item.note ? `<div class="ing-note">${item.note}</div>` : ''}</div>`;
+      grp.appendChild(el);
+    });
+    list.appendChild(grp);
+  });
+}
+
+function renderSteps() {
+  const list = document.getElementById('step-list');
+  list.innerHTML = '';
+  steps.forEach((step, i) => {
+    const el = document.createElement('div');
+    el.className = 'step-item' + (checkedSteps.has(i) ? ' done' : '');
+    el.onclick = () => { checkedSteps.has(i) ? checkedSteps.delete(i) : checkedSteps.add(i); renderSteps(); updateProg(); };
+    el.innerHTML = `<div class="step-num">${checkedSteps.has(i) ? '✓' : i + 1}</div><div class="step-text">${step}</div>`;
+    list.appendChild(el);
+  });
+}
+
+function updateProg() {
+  document.getElementById('progress-bar').style.width = Math.round((checkedSteps.size / steps.length) * 100) + '%';
+}
+
+function renderNut() {
+  document.getElementById('nut-grid').innerHTML = nutrition.map(n =>
+    `<div class="nut-item"><div class="nut-val">${n.val}</div><div class="nut-label">${n.label}</div><div class="nut-unit">${n.unit}</div></div>`
+  ).join('');
+}
+
+function renderSubs() {
+  const list = document.getElementById('subs-list');
+  list.innerHTML = '';
+  subsGroups.forEach((g, gi) => {
+    if (gi > 0) { const d = document.createElement('div'); d.className = 'divider'; list.appendChild(d); }
+    const grp = document.createElement('div');
+    grp.className = 'sub-group';
+    grp.innerHTML = `<div class="sub-group-title">${g.title}</div>`;
+    g.items.forEach(item => {
+      const el = document.createElement('div');
+      if (g.extras) {
+        el.className = 'extra-item';
+        el.innerHTML = `<div class="dot"></div><div class="extra-text">${item.text}</div>`;
+      } else {
+        el.className = 'sub-item';
+        el.innerHTML = `<div class="sub-ingredient">${item.name}</div><div class="sub-swap">${item.swap}</div>`;
+      }
+      grp.appendChild(el);
+    });
+    list.appendChild(grp);
+  });
+}
+
+function changeServings(d) {
+  servings = Math.max(1, Math.min(12, servings + d));
+  document.getElementById('servings-num').textContent = servings;
+  document.getElementById('serves-display').textContent = servings;
+  renderIng();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+async function toggleCookMode() {
+  const t = document.getElementById('cook-toggle');
+  if (t.classList.contains('on')) {
+    t.classList.remove('on');
+    if (wakeLock) { try { await wakeLock.release(); } catch(e){} wakeLock = null; }
+  } else {
+    t.classList.add('on');
+    if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){} }
+  }
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+
+renderIng();
+renderSteps();
+renderNut();
+renderSubs();
+</script>
+</body>
+</html>
