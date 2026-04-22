@@ -60,7 +60,6 @@ html, body { height: 100%; background: var(--bg); color: var(--text-primary); fo
 .servings-control button { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--border-md); background: var(--bg-secondary); cursor: pointer; font-size: 18px; color: var(--text-primary); display: flex; align-items: center; justify-content: center; }
 .servings-num { font-size: 14px; font-weight: 500; color: var(--text-primary); min-width: 16px; text-align: center; }
 .card { background: var(--bg-card); border-radius: 12px; border: 0.5px solid var(--border); overflow: hidden; margin-bottom: 12px; }
-<<<<<<< HEAD
 .section-img { width: 100%; height: 160px; object-fit: cover; object-position: center; display: block; border-radius: 12px; margin-bottom: 10px; }
 .ingredient-group { padding: 10px 14px; }
 .ig-title { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
@@ -110,6 +109,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text-primary); fo
 </head>
 <body>
 <div class="app">
+
   <div class="hero-img">
     <img src="https://ournourishingtable.com/wp-content/uploads/2024/05/Teriyaki-Beef-Bowls-4.jpg" alt="Teriyaki beef bowls" onerror="this.parentElement.style.background='#1a1a1a'">
     <div class="hero-overlay">
@@ -137,13 +137,9 @@ html, body { height: 100%; background: var(--bg); color: var(--text-primary); fo
   </div>
 
   <div class="content">
-<<<<<<< HEAD
 
     <div id="panel-ingredients" class="panel active">
       <img class="section-img" src="https://ournourishingtable.com/wp-content/uploads/2024/05/Teriyaki-Beef-Bowls-Ingredients.jpg" alt="Ingredients laid out" onerror="this.style.display='none'">
-=======
-    <div id="panel-ingredients" class="panel active">
->>>>>>> f58b9c9bb037bd92fb0d011b3407577dd5fca151
       <div class="panel-header">
         <span class="panel-title">Ingredients</span>
         <div class="servings-control">
@@ -174,15 +170,10 @@ html, body { height: 100%; background: var(--bg); color: var(--text-primary); fo
     </div>
 
     <div id="panel-subs" class="panel">
-<<<<<<< HEAD
       <img class="section-img" src="https://ournourishingtable.com/wp-content/uploads/2024/05/Gluten-Free-Teriyaki-Sauce-Ingredients.jpg" alt="Teriyaki sauce ingredients" onerror="this.style.display='none'">
       <div class="card" id="subs-list"></div>
     </div>
 
-=======
-      <div class="card" id="subs-list"></div>
-    </div>
->>>>>>> f58b9c9bb037bd92fb0d011b3407577dd5fca151
   </div>
 </div>
 
@@ -248,15 +239,9 @@ const subsGroups = [
     { name: 'Spring onions', swap: '<em>Chives</em> work as a substitute, or just leave out.' },
   ]},
   { title: 'Teriyaki sauce', items: [
-<<<<<<< HEAD
     { name: 'Tamari', swap: '<em>Gluten-free soy sauce</em> or <em>coconut aminos</em>. Regular soy sauce if not avoiding gluten.' },
     { name: 'Honey', swap: '<em>Pure maple syrup</em> to keep it vegan.' },
     { name: 'Cornflour', swap: 'Same as cornstarch — just the UK name.' },
-=======
-    { name: 'Tamari', swap: '<em>Gluten-free soy sauce</em> or <em>coconut aminos</em>. Regular soy sauce if you\'re not avoiding gluten.' },
-    { name: 'Honey', swap: '<em>Pure maple syrup</em> to keep it vegan.' },
-    { name: 'Cornflour', swap: 'Same as cornstarch — just the UK name for it.' },
->>>>>>> f58b9c9bb037bd92fb0d011b3407577dd5fca151
   ]},
   { title: 'Optional extras', extras: true, items: [
     { text: 'Chilli flakes — sprinkle over before serving for extra heat.' },
